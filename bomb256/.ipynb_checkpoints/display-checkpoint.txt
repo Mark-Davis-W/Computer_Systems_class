@@ -1,0 +1,15 @@
+display $rdi
+display/i $rdi
+display $rsi
+display/i $rsi
+display/i $rdx
+display $al
+display $rcx
+display $rbx
+display/i $pc
+display $rbp
+display $rsp
+display/i $rsp
+display $eax
+display $r12
+display *0x7fffffffd800
