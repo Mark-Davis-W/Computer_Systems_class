@@ -1,0 +1,19 @@
+phase 3 uses your input value to jump to line after first compare
+-switch case
+phase 4 recursion
+ -storing upper bound and lower bound and sub to find middle
+ -user input jump if above (unsigned)
+ -returned value to be 4?
+ phase 5 string length of 6
+ -$rip with offset is a GLOBAL variable
+ -(%rsi,%rdx,4)== ecx=ecx +rsi[rdx]
+ -array of char not INT
+ 
+ 
+ phase 4 inputting 85 in rdx and 44 in rcx
+ rsi looking for %d %d input looks like
+ scanf jumping to rip address that has hex 0xa6 or dec -90
+ checks if at least 2 arguments
+ edi counter it seems
+ looks like 2 args and 1 should be below threshold for first compare and second has to be above 27
+ 
