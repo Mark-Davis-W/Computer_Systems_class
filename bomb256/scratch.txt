@@ -1,0 +1,34 @@
+phase 3 uses your input value to jump to line after first compare
+-switch case
+phase 4 recursion
+ -storing upper bound and lower bound and sub to find middle
+ -user input jump if above (unsigned)
+ -returned value to be 4?
+ phase 5 string length of 6
+ -$rip with offset is a GLOBAL variable
+ -(%rsi,%rdx,4)== ecx=ecx +rsi[rdx]
+ -array of char not INT
+ 
+ 
+ phase 4 inputting 85 in rdx and 44 in rcx
+ rsi looking for %d %d input looks like
+ scanf jumping to rip address that has hex 0xa6 or dec -90
+ checks if at least 2 arguments
+ edi counter it seems
+ looks like 2 args and 1 should be below threshold for first compare and second has to be 27
+ actually in func4 for phase_4
+ -it seems to half, shr bit, the first input
+ -checks if above or below, unsigned, with the input
+ -adds one before calling function again
+ -adds back return value to itesx elf as it comes out
+ -
+ 
+1: $rdi = 14
+2: $rsi = 14
+3: $rdx = 14
+4: $rcx = 0
+5: $ebx = 13
+6: $rbx+0x1 = 14
+7: x/i $rsp
+   0x7fffffffd800:      or     (%rax),%eax
+8: $eax = 14
