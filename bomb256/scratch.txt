@@ -4,15 +4,10 @@ phase 3
 phase 4 recursion (hint)
  -storing upper bound and lower bound and sub to find middle
  -user input jump if above (unsigned)
- -returned value to be 4?
+ -returned value to be 4? 
  
- phase 5 string length of 6 (hint)
- -$rip with offset is a GLOBAL variable
- -(%rsi,%rdx,4)== ecx=ecx +rsi[rdx]
- -array of char not INT
- 
- 
- phase 4 inputting 85 in rdx and 44 in rcx
+ phase 4 
+ inputting 85 in rdx and 44 in rcx
  rsi looking for %d %d input looks like
  scanf jumping to rip address that has hex 0xa6 or dec -90
  checks if at least 2 arguments
@@ -25,6 +20,7 @@ phase 4 recursion (hint)
  -adds back return value to iteself as it comes out
  -so final needs to be 27 and under 14 to start so tried 9 as a multiple of 27 and worked
 
+setup this in display file to show and track
 1: $rdi
 2: $rsi
 3: $rdx
@@ -34,6 +30,12 @@ phase 4 recursion (hint)
 7: x/i $rsp
 8: $eax
 
+ 
+phase 5 
+string length of 6 (hint)
+-$rip with offset is a GLOBAL variable
+-(%rsi,%rdx,4)== ecx=ecx +rsi[rdx]
+-array of char not INT
 
 Phase 5 inputting "Hello World!"
 -trying "Hello!" -nope on both accounts
@@ -41,6 +43,7 @@ Phase 5 inputting "Hello World!"
 -so have to look at maybe a total value it's wanting from the string?
 -hint given was wrong, mine wanted two decimals, scanf param
   -lost like 3 hours on that premise
+  
 -looks like two decimal inputs and seems to be like a do while
 -array?== 10,2,14,6,7,8,12,15,11,0,4,1,13,3,9,6,5
 -adding array to counter and comparing with 0xf "15"
@@ -56,7 +59,9 @@ finally found the right starting point to give me the full 15 loops it required 
 2: $ecx = 115
 3: $edx = 15
 
-phase_6 no hint given
+
+phase_6
+no hint given
 first glance looks like a while loop
 -checks a return then executes some code
 -checks loop 5 times
@@ -69,9 +74,41 @@ moves to $rsi register
 then reads if there are six number func
 %rax/%eax is used for return of that
 then jump to line 69 entry to loop
-numbers can't be the same input, compares each entry with beg
+numbers can't be the same as 1st input, compares each entry with beg
 first number needs to start with at least 6 or exactly?
 $r12 and $rbp are the counts
+
+found these with objdump -t bomb then this
+(gdb) info address node0
+No symbol "node0" in current context.
+Symbol "node1" is at 0x555555758630 
+value = 893
+Symbol "node2" is at 0x555555758640
+value = 440
+Symbol "node3" is at 0x204650 
+value = 736
+Symbol "node4" is at 0x204660 
+value = 692
+Symbol "node5" is at 0x204670 
+value = 351
+Symbol "node6" is at 0x204120
+value = 911
+No symbol "node7" in current context.
+
+looks like a LL with nodes 1-6 I found with objdump -t
+-of which is in $rdx and each step moves $eax
+-mov    $0x2000001,%eax
+
+after verifying the six numbers
+another loop that counts through the LL/array
+-$rsi is keeping count of times looped
+-seems to be reversing array/list front to back
+
+looks like it has a cypher to get correct order
+
+so uses the input order I give with six_numbers
+-to arrange the predetermined stored variables
+-I had to input the order that gives the smallest first then next biggest each time to get out
 
 
 

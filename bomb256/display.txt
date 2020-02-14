@@ -11,5 +11,3 @@ display $rbp
 display $rsp
 display/i $rsp
 display $eax
-display $r12
-display *0x7fffffffd800
