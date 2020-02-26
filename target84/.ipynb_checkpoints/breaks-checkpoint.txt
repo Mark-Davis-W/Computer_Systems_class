@@ -1,1 +1,6 @@
-break main
+break touch1
+break touch2
+break touch3
+break getbuf
+break Gets
+

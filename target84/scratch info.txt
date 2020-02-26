@@ -1,0 +1,11 @@
+Gets function
+cookie: 0x78960173
+touch1: 4014a0
+mine allocates 0x18 which is 24 bits for the stack of the program
+-inserting all 0's with one 01 at beginning and the instruction needs to be reversed at beginning of line to input correctly to the stack because of how it reads the code
+
+
+
+there is a srand it looks like so maybe could seed a value I want to know where things will be evantually
+
+there is a strtod which I think is the string to decimal
