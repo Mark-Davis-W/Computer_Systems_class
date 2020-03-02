@@ -36,4 +36,21 @@ phase4 in Rtarget
  -then call the touch2 function
 
 phase 5 in Rtarget?
+-overflow mving around registers
+ -move rsp address into rax 4889e0c3
+ -then to rdi 4889c7c3
+ -pop rax 58909090c3
+ -need a constant to calculate cookie distance from orig rsp
+  -how big my overflow lines are in hex 0x48, rax after pop
+ -then moving it around to different registers to do calc & resave
+  -found a few addr's that caused some weird things
+  -had to use some that did extra things with the al & bl "no ops"
+  -moved constant eax to edx "sbb %bl,%bl->18db" 89c218dbc3
+  -found one to move edx to ecx "sub %al,%al->28c0" 89d128c0c3
+  -found one to move ecx to esi 89ce90c3
+  -used a full lea to add prev stored rdi with rsi into rax 488d0437c3
+  -used the same rax into rdi 4889c7c3
+   -now is setup with first argument rdi to pass into touch3
+  -like pre use addr of touch3 which takes the rdi
+  -then cookie below that with 00 null termination
 
