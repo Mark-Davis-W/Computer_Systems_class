@@ -20,6 +20,7 @@ then mov cookie into rdi register then c3 to ret
 -figured out if I don't put the code in sequential order
  -the 00's cause the program to try and do add's to $al register
  -switching to using "no op" 0x90 for rtarget
+   -(didn't seem to work well switched back on last)
 
 in phase3 i overflowed to go back to my buf and code
 -using same procedure as before but calling touch3
@@ -35,7 +36,7 @@ phase4 in Rtarget
  -then second gadget to do move into rdi
  -then call the touch2 function
 
-phase 5 in Rtarget?
+phase 5 in Rtarget
 -overflow mving around registers
  -move rsp address into rax 4889e0c3
  -then to rdi 4889c7c3
