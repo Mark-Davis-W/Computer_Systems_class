@@ -1,1 +1,1 @@
-popq   %rax
+leaq   (%rsi,%rdi),%rax
