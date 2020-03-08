@@ -164,13 +164,12 @@ class Filter *readFilter(string filename)
 
 
 /*restricted pointers letting compiler know they are unique*/
-#pragma omp declare simd aligned(filter,input,output:8)
-
+// #pragma omp declare simd aligned(filter,input,output:8)
 double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict input, cs1300bmp * __restrict output)
 {
 
-  double diffPerPixel;
-  double diff;
+//   double diffPerPixel;
+//   double diff;
   long long cycStart, cycStop;
 
   cycStart = rdtscll();
@@ -196,17 +195,17 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
     
   int inVal0,inVal1,inVal2;
   int valOut;
-  unsigned char p;
+  unsigned char p=0;
     
+//   char filSize = filter -> getSize();
+  
     /* -loop unrolled for plane
        -also reordered these 2 loops*/
-
-  #pragma omp parallel for collapse(2)
   for(p = 0; p < 3; p++) {
-
+   
+//    #pragma omp parallel num_threads(2)
     for(row = 1; row <= rowH; row++) {
-        
-         #pragma omp simd
+//          #pragma omp ordered simd
         for(col = 1; col <= colW; col++) {
             
             valOut = 0;
@@ -216,16 +215,16 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
             inVal0 = locIn -> color[p][row-1][col-1] * filter -> get(0,0);
             inVal1 = locIn -> color[p][row][col-1] * filter -> get(1,0);
             inVal2 = locIn -> color[p][row+1][col-1] * filter -> get(2,0);
-                        
+            
             inVal0 += locIn -> color[p][row-1][col] * filter -> get(0,1);
             inVal1 += locIn -> color[p][row][col] * filter -> get(1,1);
-            inVal2 += locIn -> color[p][row+1][col] * filter -> get(2,1);           
+            inVal2 += locIn -> color[p][row+1][col] * filter -> get(2,1);
             
             inVal0 += locIn -> color[p][row-1][col+1] * filter -> get(0,2);
             inVal1 += locIn -> color[p][row][col+1] * filter -> get(1,2);
             inVal2 += locIn -> color[p][row+1][col+1] * filter -> get(2,2);
-                        
-            valOut = inVal0 + inVal1 + inVal2;
+            
+            valOut += inVal0 + inVal1 + inVal2;
             
             if(div != 1){
               valOut *= div;
@@ -234,13 +233,14 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
             valOut = valOut < 0 ? 0 : valOut > 255 ? 255 : valOut;
             
             output -> color[p][row][col] = valOut;
+            
         }
     }
   }
 
   cycStop = rdtscll();
-  diff = cycStop - cycStart;
-  diffPerPixel = diff / (output -> width * output -> height);
+  double diff = cycStop - cycStart;
+  double diffPerPixel = diff / (output -> width * output -> height);
   fprintf(stderr, "Took %f cycles to process, or %f cycles per pixel\n",
 	  diff, diff / (output -> width * output -> height));
   return diffPerPixel;

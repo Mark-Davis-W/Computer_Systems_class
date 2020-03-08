@@ -165,12 +165,11 @@ class Filter *readFilter(string filename)
 
 /*restricted pointers letting compiler know they are unique*/
 #pragma omp declare simd aligned(filter,input,output:8)
-
 double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict input, cs1300bmp * __restrict output)
 {
 
-  double diffPerPixel;
-  double diff;
+//   double diffPerPixel;
+//   double diff;
   long long cycStart, cycStop;
 
   cycStart = rdtscll();
@@ -192,55 +191,83 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
   int rowH = high-1;
   
   float div = (1.0/filter -> getDivisor());
-  int row,col;
+  int row,col,j=0,get0,get1,get2,p=0;
+  int colTrav1,colTrav3,rowTrav0,rowTrav1,rowTrav2;
     
   int inVal0,inVal1,inVal2;
-  int valOut;
-  unsigned char p;
+  int valOut0,valOut1,valOut2;
     
+//   char filSize = filter -> getSize();
+  
     /* -loop unrolled for plane
        -also reordered these 2 loops*/
-
-  #pragma omp parallel for collapse(2)
   for(p = 0; p < 3; p++) {
-
+   
+//    #pragma omp parallel num_threads(2)
     for(row = 1; row <= rowH; row++) {
         
-         #pragma omp simd
+        
+//          #pragma omp simd
         for(col = 1; col <= colW; col++) {
             
-            valOut = 0;
             
-            inVal0 = 0; inVal1 = 0; inVal2 = 0;
-            
-            inVal0 = locIn -> color[p][row-1][col-1] * filter -> get(0,0);
-            inVal1 = locIn -> color[p][row][col-1] * filter -> get(1,0);
-            inVal2 = locIn -> color[p][row+1][col-1] * filter -> get(2,0);
-                        
-            inVal0 += locIn -> color[p][row-1][col] * filter -> get(0,1);
-            inVal1 += locIn -> color[p][row][col] * filter -> get(1,1);
-            inVal2 += locIn -> color[p][row+1][col] * filter -> get(2,1);           
-            
-            inVal0 += locIn -> color[p][row-1][col+1] * filter -> get(0,2);
-            inVal1 += locIn -> color[p][row][col+1] * filter -> get(1,2);
-            inVal2 += locIn -> color[p][row+1][col+1] * filter -> get(2,2);
-                        
-            valOut = inVal0 + inVal1 + inVal2;
-            
-            if(div != 1){
-              valOut *= div;
+            valOut0 = 0;  valOut1 = 0;  valOut2 = 0;   
+
+    /*reordered loop and calculated within loop needed*/
+//             #pragma omp parallel num_threads(10)
+//                  {
+//           #pragma omp ordered simd
+//             for (i = 0; i < 3; i++) {
+                  inVal0 = 0; inVal1 = 0; inVal2 = 0;
+                  rowTrav0 = row - 1;
+//                   rowTrav1 = row;
+                  rowTrav2 = row + 1;
+                  
+                  
+                
+            #pragma omp ordered simd
+               for (j = 0; j < 3; j++) {
+                  get0 = filter -> get(0,j);
+                  get1 = filter -> get(1,j);
+                  get2 = filter -> get(2,j);
+//                   rowTrav = row + i - 1;
+                  colTrav1 = col + j - 1;
+//                   colTrav2 = col;
+//                   colTrav3 = col + j - 1;
+                 
+                  inVal0 = locIn -> color[p][rowTrav0][colTrav1];// + locIn -> color[p][rowTrav][col] + locIn -> color[p][rowTrav][colTrav3];
+                  inVal1 = locIn -> color[p][row][colTrav1];
+                  inVal2 = locIn -> color[p][rowTrav2][colTrav1];
+                   
+                  valOut0 += ( inVal0 * get0 ) + ( inVal0 * get1 ) + ( inVal0 * get2 )
+                  + ( inVal1 * get0 ) + ( inVal1 * get1 ) + ( inVal1 * get2 )
+                  + ( inVal2 * get0 ) + ( inVal2 * get1 ) + ( inVal2 * get2 );
+                  
+//                   value0 += valOut1 + valOut2;
+//                 }
             }
             
-            valOut = valOut < 0 ? 0 : valOut > 255 ? 255 : valOut;
+                
+            if(div != 1){
+              valOut0 *= div; /*valOut1 *= div; valOut2 *= div;*/
+            }
             
-            output -> color[p][row][col] = valOut;
+            valOut0 = valOut0 < 0 ? 0 : valOut0 > 255 ? 255 : valOut0;
+//             valOut1 = valOut1 < 0 ? 0 : valOut1 > 255 ? 255 : valOut1;
+//             valOut2 = valOut2 < 0 ? 0 : valOut2 > 255 ? 255 : valOut2;
+            
+            //moved here to write after local variable calculated//
+            output -> color[p][row][col] = valOut0;
+//             output -> color[p][row][col+1] = valOut1;
+//             output -> color[p][row][col+2] = valOut2;
+            
         }
     }
   }
 
   cycStop = rdtscll();
-  diff = cycStop - cycStart;
-  diffPerPixel = diff / (output -> width * output -> height);
+  double diff = cycStop - cycStart;
+  double diffPerPixel = diff / (output -> width * output -> height);
   fprintf(stderr, "Took %f cycles to process, or %f cycles per pixel\n",
 	  diff, diff / (output -> width * output -> height));
   return diffPerPixel;
