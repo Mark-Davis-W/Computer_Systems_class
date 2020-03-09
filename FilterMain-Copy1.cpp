@@ -13,8 +13,6 @@ using namespace std;
 #ifndef _Filter_h_
 #define _Filter_h_
 
-using namespace std;
-
 //WMD: added this to main file to have all in one for Filter
 class Filter {
   int *data;
@@ -149,8 +147,8 @@ class Filter *readFilter(string filename)
     input >> div;
     filter -> setDivisor(div);
     int value = 0; //moved this outside loop & init
-    for (int i=0; i < size; i++) {
-      for (int j=0; j < size; j++) {
+    for (int j=0; j < size; j++){
+      for (int i=0; i < size; i++) {
         input >> value;
         filter -> set(i,j,value);
       }

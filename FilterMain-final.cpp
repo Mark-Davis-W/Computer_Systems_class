@@ -203,10 +203,10 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
        -also reordered these 2 loops*/
   for(p = 0; p < 3; p++) {
    
-//    #pragma omp parallel num_threads(2)
-    for(row = 1; row <= rowH; row++) {
-//          #pragma omp ordered simd
-        for(col = 1; col <= colW; col++) {
+   #pragma omp parallel num_threads(8)
+    for(row = 1; row < rowH; row++) {
+         #pragma omp simd
+        for(col = 1; col < colW; col++) {
             
             valOut = 0;
             

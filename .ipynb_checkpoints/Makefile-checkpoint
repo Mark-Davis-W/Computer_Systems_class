@@ -6,7 +6,7 @@ CXX	=g++
 ## Use our standard compiler flags for the course...
 ## You can try changing these flags to improve performance.
 ##
-CXXFLAGS= -g -Ofast -fopenmp -fno-omit-frame-pointer -Wall ##-floop-parallelize-all -funroll-loops -fmodulo-sched -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fselective-scheduling -faggressive-loop-optimizations -fopenmp 
+CXXFLAGS= -g -O2 -fopenmp -fno-omit-frame-pointer -Wall ##-floop-parallelize-all -funroll-loops -fmodulo-sched -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fselective-scheduling -faggressive-loop-optimizations -fopenmp 
 
 goals: judge
 	@echo "Done"

@@ -203,10 +203,10 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
        -also reordered these 2 loops*/
   for(p = 0; p < 3; p++) {
    
-//    #pragma omp parallel num_threads(2)
-    for(row = 1; row <= rowH; row++) {
+   #pragma omp parallel for num_threads(2)
+    for(row = 1; row < rowH; row++) {
          #pragma omp simd
-        for(col = 1; col <= colW; col+=2) {
+        for(col = 1; col < colW; col+=2) {
             
             valOut = 0;
             
@@ -232,28 +232,34 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
             
             valOut = valOut < 0 ? 0 : valOut > 255 ? 255 : valOut;
             
-//             inVal10 = locIn -> color[p][row-1][col] * filter -> get(0,0);
-//             inVal11 = locIn -> color[p][row][col] * filter -> get(1,0);
-//             inVal12 = locIn -> color[p][row+1][col] * filter -> get(2,0);
-            
-//             inVal10 += locIn -> color[p][row-1][col+1] * filter -> get(0,1);
-//             inVal11 += locIn -> color[p][row][col+1] * filter -> get(1,1);
-//             inVal12 += locIn -> color[p][row+1][col+1] * filter -> get(2,1);
-            
-//             inVal10 += locIn -> color[p][row-1][col+2] * filter -> get(0,2);
-//             inVal11 += locIn -> color[p][row][col+2] * filter -> get(1,2);
-//             inVal12 += locIn -> color[p][row+1][col+2] * filter -> get(2,2);
-            
-//             valOut1 = inVal10 + inVal11 + inVal12;
-            
-//             if(div != 1){
-//               valOut1 *= div;
-//             }
-            
-//             valOut1 = valOut1 < 0 ? 0 : valOut1 > 255 ? 255 : valOut1;
-            
             output -> color[p][row][col] = valOut;
-//             output -> color[p][row][col+1] = valOut1;
+            
+            valOut = 0;
+            
+            inVal0 = 0; inVal1 = 0; inVal2 = 0;
+            
+            inVal0 = locIn -> color[p][row-1][col] * filter -> get(0,0);
+            inVal1 = locIn -> color[p][row][col] * filter -> get(1,0);
+            inVal2 = locIn -> color[p][row+1][col] * filter -> get(2,0);
+            
+            inVal0 += locIn -> color[p][row-1][col+1] * filter -> get(0,1);
+            inVal1 += locIn -> color[p][row][col+1] * filter -> get(1,1);
+            inVal2 += locIn -> color[p][row+1][col+1] * filter -> get(2,1);
+            
+            inVal0 += locIn -> color[p][row-1][col+2] * filter -> get(0,2);
+            inVal1 += locIn -> color[p][row][col+2] * filter -> get(1,2);
+            inVal2 += locIn -> color[p][row+1][col+2] * filter -> get(2,2);
+            
+            valOut = inVal0 + inVal1 + inVal2;
+            
+            if(div != 1){
+              valOut *= div;
+            }
+            
+            valOut = valOut < 0 ? 0 : valOut > 255 ? 255 : valOut;
+            
+            
+            output -> color[p][row][col+1] = valOut;
             
         }
     }

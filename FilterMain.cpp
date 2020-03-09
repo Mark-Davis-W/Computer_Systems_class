@@ -165,8 +165,9 @@ class Filter *readFilter(string filename)
 
 /*restricted pointers letting compiler know they are unique*/
 #pragma omp declare simd aligned(filter,input,output:8)
+// __attribute__((regcall)) foo (int I, int j)
 
-double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict input, cs1300bmp * __restrict output)
+inline double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict input, cs1300bmp * __restrict output)
 {
 
   double diffPerPixel;
@@ -176,12 +177,13 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
   cycStart = rdtscll();
   
   
-//   create local var for accum of data type
-  cs1300bmp *locIn = input;
+//   create local var for accumulating data
+  cs1300bmp * __restrict locIn = input;
+    
 
 //creating another local variable
-  int width = output -> width = input -> width;
-  int high = output -> height = input -> height;
+  int width = output -> width = locIn -> width;
+  int high = output -> height = locIn -> height;
   
   /*created local vars instead of calculating w/n loops
     -established local var for r,c bounds
@@ -196,36 +198,52 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
     
   int inVal0,inVal1,inVal2;
   int valOut;
-  unsigned char p;
+  
+  int filterXY[3][3];
+    for(row = 0; row < 3; row++){
+        for(col = 0; col < 3; col++){
+            filterXY[row][col] = filter->get(row,col);
+        }
+    }
+  short p;
     
     /* -loop unrolled for plane
        -also reordered these 2 loops*/
 
-  #pragma omp parallel for collapse(2)
+//   #pragma omp parallel for simd num_threads(4)
+//     #pragma omp parallel for
+    #pragma GCC ivdep
   for(p = 0; p < 3; p++) {
-
-    for(row = 1; row <= rowH; row++) {
-        
-         #pragma omp simd
-        for(col = 1; col <= colW; col++) {
+//      #pragma omp parallel for num_threads(5)
+      #pragma omp parallel for simd num_threads(4)
+//       #pragma GCC ivdep
+//       #pragma omp simd
+    for(row = 1; row < rowH; row++) {
+//         #pragma GCC ivdep
+         #pragma omp ordered simd
+        for(col = 1; col < colW; col+=2) {
             
             valOut = 0;
             
             inVal0 = 0; inVal1 = 0; inVal2 = 0;
             
-            inVal0 = locIn -> color[p][row-1][col-1] * filter -> get(0,0);
-            inVal1 = locIn -> color[p][row][col-1] * filter -> get(1,0);
-            inVal2 = locIn -> color[p][row+1][col-1] * filter -> get(2,0);
-                        
-            inVal0 += locIn -> color[p][row-1][col] * filter -> get(0,1);
-            inVal1 += locIn -> color[p][row][col] * filter -> get(1,1);
-            inVal2 += locIn -> color[p][row+1][col] * filter -> get(2,1);           
+            inVal0 = locIn -> color[p][row-1][col-1] * filterXY[0][0];
+            inVal1 = locIn -> color[p][row][col-1] * filterXY[1][0];
+            inVal2 = locIn -> color[p][row+1][col-1] * filterXY[2][0];
             
-            inVal0 += locIn -> color[p][row-1][col+1] * filter -> get(0,2);
-            inVal1 += locIn -> color[p][row][col+1] * filter -> get(1,2);
-            inVal2 += locIn -> color[p][row+1][col+1] * filter -> get(2,2);
-                        
             valOut = inVal0 + inVal1 + inVal2;
+                        
+            inVal0 = locIn -> color[p][row-1][col] * filterXY[0][1];
+            inVal1 = locIn -> color[p][row][col] * filterXY[1][1];
+            inVal2 = locIn -> color[p][row+1][col] * filterXY[2][1];
+            
+            valOut += inVal0 + inVal1 + inVal2;
+            
+            inVal0 = locIn -> color[p][row-1][col+1] * filterXY[0][2];
+            inVal1 = locIn -> color[p][row][col+1] * filterXY[1][2];
+            inVal2 = locIn -> color[p][row+1][col+1] * filterXY[2][2];
+                        
+            valOut += inVal0 + inVal1 + inVal2;
             
             if(div != 1){
               valOut *= div;
@@ -234,6 +252,38 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
             valOut = valOut < 0 ? 0 : valOut > 255 ? 255 : valOut;
             
             output -> color[p][row][col] = valOut;
+                
+// --------------------------------------------------------------------------------
+//             valOut = 0;
+            
+//             inVal0 = 0; inVal1 = 0; inVal2 = 0;
+            
+            inVal0 = locIn -> color[p][row-1][col] * filterXY[0][0];
+            inVal1 = locIn -> color[p][row][col] * filterXY[1][0];
+            inVal2 = locIn -> color[p][row+1][col] * filterXY[2][0];
+            
+            valOut = inVal0 + inVal1 + inVal2;
+                        
+            inVal0 = locIn -> color[p][row-1][col+1] * filterXY[0][1];
+            inVal1 = locIn -> color[p][row][col+1] * filterXY[1][1];
+            inVal2 = locIn -> color[p][row+1][col+1] * filterXY[2][1]; 
+            
+            valOut += inVal0 + inVal1 + inVal2;
+            
+            inVal0 = locIn -> color[p][row-1][col+2] * filterXY[0][2];
+            inVal1 = locIn -> color[p][row][col+2] * filterXY[1][2];
+            inVal2 = locIn -> color[p][row+1][col+2] * filterXY[2][2];
+                        
+            valOut += inVal0 + inVal1 + inVal2;
+            
+            if(div != 1){
+              valOut *= div;
+            }
+            
+            valOut = valOut < 0 ? 0 : valOut > 255 ? 255 : valOut;
+            
+            output -> color[p][row][col+1] = valOut;
+        
         }
     }
   }
@@ -245,3 +295,4 @@ double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict inpu
 	  diff, diff / (output -> width * output -> height));
   return diffPerPixel;
 }
+

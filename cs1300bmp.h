@@ -29,7 +29,7 @@ struct cs1300bmp {
   // 
   //WMD: changed this to unsigned char
   //-only need this amount to determine which color not full int size
-  unsigned char color[MAX_COLORS][MAX_DIM][MAX_DIM];
+  int color[MAX_COLORS][MAX_DIM][MAX_DIM];
 };
 
 //
