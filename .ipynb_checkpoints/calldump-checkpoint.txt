@@ -1,0 +1,42 @@
+--------------------------------------------------------------------------------
+Profile data file 'callgrind.out.99161' (creator: callgrind-3.13.0)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 244896455
+Trigger: Program termination
+Profiled target:  ./filter hline.filter blocks-small.bmp (PID 99161, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       99
+Include dirs:     
+User annotated:   
+Auto-annotation:  off
+
+--------------------------------------------------------------------------------
+           Ir 
+--------------------------------------------------------------------------------
+1,223,416,622  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+         Ir  file:function
+--------------------------------------------------------------------------------
+166,726,454  ???:std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long) [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+128,987,826  ???:std::basic_filebuf<char, std::char_traits<char> >::xsputn(char const*, long) [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+116,393,934  ???:std::istream::read(char*, long) [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+116,036,901  FilterMain.cpp:applyFilter(Filter*, cs1300bmp*, cs1300bmp*) [clone ._omp_fn.0] [/home/jovyan/lab4-perflab-gaguyga/filter]
+110,106,220  ???:std::basic_streambuf<char, std::char_traits<char> >::xsgetn(char*, long) [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+110,088,932  ???:std::basic_streambuf<char, std::char_traits<char> >::xsputn(char const*, long) [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+106,956,592  ???:std::basic_filebuf<char, std::char_traits<char> >::xsgetn(char*, long) [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+ 94,362,354  /build/glibc-OTsEL5/glibc-2.27/string/../sysdeps/x86_64/multiarch/memmove-vec-unaligned-erms.S:__memcpy_avx_unaligned_erms [/lib/x86_64-linux-gnu/libc-2.27.so]
+ 84,936,779  ???:std::istream::sentry::sentry(std::istream&, bool) [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+ 69,207,204  ???:std::ostream::sentry::sentry(std::ostream&) [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+ 44,058,780  cs1300bmp.cc:bmp_read(char*, unsigned long*, long*, unsigned char**, unsigned char**, unsigned char**) [clone .constprop.7] [/home/jovyan/lab4-perflab-gaguyga/filter]
+ 20,971,539  /usr/include/c++/7/ostream:bmp_24_write(char*, unsigned long, long, unsigned char*, unsigned char*, unsigned char*)
+ 18,874,692  ???:std::ostream::sentry::~sentry() [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+  9,447,480  cs1300bmp.cc:cs1300bmp_readfile [/home/jovyan/lab4-perflab-gaguyga/filter]
+  8,401,005  cs1300bmp.cc:bmp_24_write(char*, unsigned long, long, unsigned char*, unsigned char*, unsigned char*) [/home/jovyan/lab4-perflab-gaguyga/filter]
+  6,292,340  ???:std::codecvt<char, char, __mbstate_t>::do_always_noconv() const [/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25]
+

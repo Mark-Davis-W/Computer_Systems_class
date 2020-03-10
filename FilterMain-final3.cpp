@@ -164,10 +164,10 @@ class Filter *readFilter(string filename)
 
 
 /*restricted pointers letting compiler know they are unique*/
-// #pragma omp declare simd aligned(filter,input,output:8)
+#pragma omp declare simd aligned(filter,input,output:16)
 // __attribute__((regcall)) foo (int I, int j)
 
-inline double applyFilter(class Filter *filter, cs1300bmp *input, cs1300bmp *output)
+inline double applyFilter(class Filter * __restrict filter, cs1300bmp * __restrict input, cs1300bmp * __restrict output)
 {
 
   double diffPerPixel;
@@ -178,19 +178,20 @@ inline double applyFilter(class Filter *filter, cs1300bmp *input, cs1300bmp *out
   
   
 //   create local var for pulling data locally
-  cs1300bmp *locIn = input;
+  cs1300bmp * __restrict locIn = input;
+    
 
 //creating another local variable
-  int colW = output -> width = locIn -> width;
-  int rowH = output -> height = locIn -> height;
+  int width = output -> width = locIn -> width;
+  int high = output -> height = locIn -> height;
   
   /*created local vars instead of calculating w/n loops
     -established local var for r,c bounds
     -also some constants instead of function calls
     -and consts for calculations
   */
-  colW = colW-1;
-  rowH = rowH-1;
+  int colW = width-1;
+  int rowH = high-1;
   
   float div = (1.0/filter -> getDivisor());
   int row,col;
@@ -204,7 +205,7 @@ inline double applyFilter(class Filter *filter, cs1300bmp *input, cs1300bmp *out
             filterXY[row][col] = filter->get(row,col);
         }
     }
-  unsigned char p;
+  short p;
     
     /*WMD: changed order of loops
       -planes are at the top
@@ -215,22 +216,21 @@ inline double applyFilter(class Filter *filter, cs1300bmp *input, cs1300bmp *out
     */
 
 //   #pragma omp parallel for simd num_threads(4)
-//     #pragma omp parallel for collapse(2)
+//     #pragma omp parallel for
 //     #pragma GCC ivdep
-  for(p = 0; p < 3; p+=1) {
+  for(p = 0; p < 3; p++) {
 //      #pragma omp parallel for num_threads(5)
       #pragma omp parallel for simd num_threads(4)
 //       #pragma GCC ivdep
-//       #pragma omp for simd
+//       #pragma omp simd
     for(row = 1; row < rowH; row++) {
 //         #pragma GCC ivdep
          #pragma omp ordered simd
 //         #pragma omp simd
-//         #pragma omp parallel for simd
         for(col = 1; col < colW; col+=2) {
             
             valOut = 0;
-            //1
+            
             inVal0 = 0; inVal1 = 0; inVal2 = 0;
             
             inVal0 = locIn -> color[p][row-1][col-1] * filterXY[0][0];
@@ -261,7 +261,7 @@ inline double applyFilter(class Filter *filter, cs1300bmp *input, cs1300bmp *out
                 
 // --------------------------------------------------------------------------------
 //             valOut = 0;
-            //2
+            
 //             inVal0 = 0; inVal1 = 0; inVal2 = 0;
             
             inVal0 = locIn -> color[p][row-1][col] * filterXY[0][0];
@@ -289,7 +289,7 @@ inline double applyFilter(class Filter *filter, cs1300bmp *input, cs1300bmp *out
             valOut = valOut < 0 ? 0 : valOut > 255 ? 255 : valOut;
             
             output -> color[p][row][col+1] = valOut;
-            
+        
         }
     }
   }
