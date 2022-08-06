@@ -1,0 +1,51 @@
+rm -f *~ *.o mdriver
+cc -Wall -O3 -g -march=core-avx2   -c -o mdriver.o mdriver.c
+cc -Wall -O3 -g -march=core-avx2   -c -o mm.o mm.c
+cc -Wall -O3 -g -march=core-avx2   -c -o memlib.o memlib.c
+cc -Wall -O3 -g -march=core-avx2   -c -o fsecs.o fsecs.c
+cc -Wall -O3 -g -march=core-avx2   -c -o fcyc.o fcyc.c
+cc -Wall -O3 -g -march=core-avx2   -c -o clock.o clock.c
+cc -Wall -O3 -g -march=core-avx2   -c -o ftimer.o ftimer.c
+cc -Wall -O3 -g -march=core-avx2 -o mdriver mdriver.o mm.o memlib.o fsecs.o fcyc.o clock.o ftimer.o
+          ----------------
+Trace: binary2-bal.rep
+Perf index = 31 (util) + 40 (thru) = 71/100
+          ----------------
+Trace: coalescing-bal.rep
+Perf index = 48 (util) + 40 (thru) = 88/100
+          ----------------
+Trace: random2-bal.rep
+Perf index = 54 (util) + 40 (thru) = 94/100
+          ----------------
+Trace: realloc-bal.rep
+Perf index = 18 (util) + 9 (thru) = 28/100
+          ----------------
+Trace: binary-bal.rep
+Perf index = 33 (util) + 40 (thru) = 73/100
+          ----------------
+Trace: cp-decl-bal.rep
+Perf index = 57 (util) + 40 (thru) = 97/100
+          ----------------
+Trace: random-bal.rep
+Perf index = 56 (util) + 40 (thru) = 96/100
+          ----------------
+Trace: short1-bal.rep
+Perf index = 34 (util) + 40 (thru) = 74/100
+          ----------------
+Trace: cccp-bal.rep
+Perf index = 55 (util) + 40 (thru) = 95/100
+          ----------------
+Trace: expr-bal.rep
+Perf index = 58 (util) + 40 (thru) = 98/100
+          ----------------
+Trace: realloc2-bal.rep
+Perf index = 16 (util) + 40 (thru) = 56/100
+          ----------------
+Trace: short2-bal.rep
+Perf index = 60 (util) + 40 (thru) = 100/100
+
+-----------------------------------------------------------------------------
+For program ./mdriver
+sum is 970, samples is 12
+Average Score is 80.83333333333333 with 0 missed cases for grade of 88.17500000000001
+-----------------------------------------------------------------------------
