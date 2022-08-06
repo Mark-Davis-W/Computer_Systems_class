@@ -62,4 +62,3 @@ If you're still rusty with Git, ask the TA in your recitation.
 ## Now what?
 
 You should read the [full attacklab writeup](attacklab.pdf) and get going!
-
