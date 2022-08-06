@@ -1,0 +1,10 @@
+Started out in recitation doing loop unrolloing of the planes
+I initiated local variables for many things
+ -so they don't have to calculate each time through the loop
+  -some are constants like widths and height for the for loop compares
+  -some replace the function calls with constants like getSize/getDivisor
+  -
+  
+first value in filter is size 3 for 3x3 file
+second value is the divisor
+
